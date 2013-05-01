@@ -7,29 +7,24 @@
 
 import cv2
 import glob
+import sys
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
 ScrewFilenameBotomRight = "Templates/BottomRightCornerScrew.png"
 
 def FindCorner( image, screwtemplate, ShowTracking = True ):
-    W,H = image.shape[:2]
     w,h = screwtemplate.shape[:2]
-    
-    width = W - w + 1
-    height = H - h + 1
 
     result = cv2.matchTemplate(screwtemplate,image,cv2.TM_CCORR_NORMED)
     
-    minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)
+    minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)  # @UnusedVariable
     
     if maxval < 1.0:
-        print "Note: match should be 100%%, was %f"%(maxval*100,)
+        print >> sys.stderr, "Note: match should be 100%%, was %f"%(maxval*100,)
     
     if ShowTracking:
         cv2.rectangle(image, maxloc, (maxloc[0]+w, maxloc[1]+h), ( 0, 0, 255 ) )
-    #ShowImage("Result", result)
-    #WaitKey()
     
     return maxloc
 
