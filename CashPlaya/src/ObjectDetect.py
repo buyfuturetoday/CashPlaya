@@ -3,42 +3,42 @@
 #
 # Some docs..
 # - http://docs.opencv.org/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
+# - http://blog.matael.org/writing/a-first-try-at-ambilight/
 
-
-from cv import *
+import cv2
 import glob
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
 ScrewFilenameBotomRight = "Templates/BottomRightCornerScrew.png"
 
-def FindCorner( image, screwtemplate ):
-    W,H = GetSize(image)
-    w,h = GetSize(screwtemplate)
+def FindCorner( image, screwtemplate, ShowTracking = True ):
+    W,H = image.shape[:2]
+    w,h = screwtemplate.shape[:2]
     
     width = W - w + 1
     height = H - h + 1
+
+    result = cv2.matchTemplate(screwtemplate,image,cv2.TM_CCORR_NORMED)
     
-    result = CreateImage((width, height), 32, 1)
-    MatchTemplate(image, screwtemplate, result, CV_TM_CCORR_NORMED)
-    
-    minval, maxval, minloc, maxloc = MinMaxLoc(result)
+    minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)
     
     if maxval < 1.0:
         print "Note: match should be 100%%, was %f"%(maxval*100,)
     
-    ShowImage("Result", result)
+    if ShowTracking:
+        cv2.rectangle(image, maxloc, (maxloc[0]+w, maxloc[1]+h), ( 0, 0, 255 ) )
+    #ShowImage("Result", result)
     #WaitKey()
     
     return maxloc
 
 # load templates
-screwtemplateTL = LoadImage(ScrewFilenameTopLeft)
-screwtemplateBR = LoadImage(ScrewFilenameBotomRight)
+screwtemplateTL = cv2.imread(ScrewFilenameTopLeft)
+screwtemplateBR = cv2.imread(ScrewFilenameBotomRight)
 
 for screenshotfilename in glob.glob("Screenshots/*.png"):
-    image = LoadImage( screenshotfilename )
-    ShowImage("image", image)
+    image = cv2.imread( screenshotfilename )
     
     
     print "located corners in file %s"%screenshotfilename
@@ -52,5 +52,8 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
     print " - size: %d x %d"%(CornerBR[0]-CornerTL[0], CornerBR[1]-CornerTL[1])
     print ""
 
-WaitKey()
+    cv2.imshow("image", image)
+
+
+cv2.waitKey()
 
