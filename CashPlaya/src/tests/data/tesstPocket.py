@@ -7,7 +7,6 @@ import unittest
 from data. point import point
 from data.pocket import pocket
 import numpy
-import cv2
 
 # test data
 offsetPoint = point( 10, 20 )
