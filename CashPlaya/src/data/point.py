@@ -12,7 +12,12 @@ class point(object):
     
     def __eq__(self, otherpoint):
         return (self.x == otherpoint.x) & (self.y == otherpoint.y)
-        
+
+    def __mul__(self, multiplier):
+        return point( multiplier*self.x, multiplier* self.y )
+
+    __rmul__ = __mul__
+    
     @property
     def tupple(self):
         return self.x, self.y

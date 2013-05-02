@@ -31,6 +31,13 @@ class Test(unittest.TestCase):
         p2 = point( c,d)
         self.assertEqual(p1+p2, point(a+c, b+d ) )
 
+    def testMul(self):
+        a,b = 6,7
+        m = 8
+        self.assertEqual( m*point( a, b ), point(m*a, m*b))
+        self.assertEqual( point( a, b )*m, point(m*a, m*b))
+        
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
