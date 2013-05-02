@@ -12,7 +12,6 @@ class pocket( object ):
         @param offset: The  top-left corner of the pocket reltavie to 0,0 in the main image
         @param emptyImage: The image to be used to check if the pocket is empty
         ''' 
-        # TODO: this calculations to genposckets function
         self.PointTL = offset
         self.PointBR = offset+point(self.size-1, self.size-1 )
         
