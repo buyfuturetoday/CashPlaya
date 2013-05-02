@@ -4,10 +4,13 @@
 # Some docs..
 # - http://docs.opencv.org/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
 # - http://blog.matael.org/writing/a-first-try-at-ambilight/
+# - http://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image
+
 
 import cv2
 import glob
 import sys
+import numpy
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
@@ -33,13 +36,19 @@ class point(object):
     
 class pocket( object ):
     ''' the square thing to hold an item '''
-    def __init__(self, col, row, offset, size = 40 ):
-        self.PointTL = offset+point(col*size, row*size )
-        self.PointBR = offset+point((col+1)*size-1, (row+1)*size-1 )
+    size = 40 # measured and will never change :-)
+    
+    def __init__(self, col, row, offset ):
+        # TODO: this calculations to genposckets function
+        self.PointTL = offset+point(col*self.size, row*self.size )
+        self.PointBR = offset+point((col+1)*self.size-1, (row+1)*self.size-1 )
+        
         self.pos = point( col, row )
         self.offset = offset
-        self.size = size
-        
+        self.currentImage = None
+        self.emptyImage = None
+
+                
     @property
     def pointTopLeft(self):
         return self.PointTL
@@ -48,20 +57,38 @@ class pocket( object ):
     def pointBottomRight(self):
         return self.PointBR
 
+    def isEmpty(self, image ):
+        ''' compares the default empty image with the current picture '''
+        if not self.emptyImage:
+            self.emptyImage = numpy.zeros((self.size, self.size))
+
+        self.currentImage = image[self.pointTopLeft.x:self.pointTopLeft.y,
+                                  self.pointBottomRight.x:self.pointBottomRight.y,:]
+        
+        result = cv2.matchTemplate(self.emptyImage, self.currentImage, cv2.TM_CCORR_NORMED)
+        minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)  # @UnusedVariable
+
+        if maxval < 0.99:
+            print >> sys.stderr, "[%d, %d] current image not empty: %f"%(self.pos.x, self.pos.y, maxval)
+            
+            return False
+        
+        #else empty
+        return True
+        
+
 def FindCorner( image, screwtemplate, ShowTracking = True ):
     ''' using the template, the corner screw is found
     @return: the position of the corner screw
     '''
-    w,h = screwtemplate.shape[:2]
-
     result = cv2.matchTemplate(screwtemplate,image,cv2.TM_CCORR_NORMED)
-    
     minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)  # @UnusedVariable
-    
+
     if maxval < 1.0:
         print >> sys.stderr, "Note: match should be 100%%, was %f"%(maxval*100,)
     
     if ShowTracking:
+        w,h = screwtemplate.shape[:2]
         cv2.rectangle(image, maxloc, (maxloc[0]+w, maxloc[1]+h), color_red )
     
     return point(maxloc[0], maxloc[1])
@@ -76,9 +103,9 @@ def GenPockets( offset, ColCount = 7, RowCount = 7):
 
     return pockets
     
-def CheckPocket( col, row):
-    ''' checks if the '''
-    pass
+# def CheckPocket( col, row):
+#     ''' checks if the '''
+#     pass
 
 # load templates
 screwtemplateTL = cv2.imread(ScrewFilenameTopLeft)
@@ -120,7 +147,7 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
                           color_red )
             # TODO: add text here to show what the detected content is.
         
-    # TODO: add rectangle aroung next items
+    # TODO: add rectangle around next items
     
     cv2.imshow(screenshotfilename, image)
 
