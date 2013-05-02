@@ -10,6 +10,9 @@ class point(object):
     def __sub__(self, otherpoint ):
         return point( self.x-otherpoint.x, self.y-otherpoint.y)
     
+    def __eq__(self, otherpoint):
+        return (self.x == otherpoint.x) & (self.y == otherpoint.y)
+        
     @property
     def tupple(self):
         return self.x, self.y
