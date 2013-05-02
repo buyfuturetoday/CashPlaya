@@ -18,21 +18,7 @@ ScrewFilenameBotomRight = "Templates/BottomRightCornerScrew.png"
 
 color_red = (0, 0, 255)
 
-class point(object):
-    ''' point class: basic x,y with add and subtract '''
-    def __init__(self, x,y):
-        self.x = x
-        self.y = y
-        
-    def __add__(self, otherpoint ):
-        return point( self.x+otherpoint.x, self.y+otherpoint.y)
-    
-    def __sub__(self, otherpoint ):
-        return point( self.x-otherpoint.x, self.y-otherpoint.y)
-    
-    @property
-    def tupple(self):
-        return self.x, self.y
+
     
 class pocket( object ):
     ''' the square thing to hold an item '''
@@ -60,7 +46,8 @@ class pocket( object ):
     def isEmpty(self, image ):
         ''' compares the default empty image with the current picture '''
         if not self.emptyImage:
-            self.emptyImage = numpy.zeros((self.size, self.size))
+            self.emptyImage = cv2.imread(ScrewFilenameTopLeft)
+            #self.emptyImage = numpy.zeros((self.size, self.size), numpy.float32)
 
         self.currentImage = image[self.pointTopLeft.x:self.pointTopLeft.y,
                                   self.pointBottomRight.x:self.pointBottomRight.y,:]
@@ -141,10 +128,12 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
     # draw pockets
     for col in range(0,7):
         for row in range(0,7):
+            print "[%d, %d] is empty? %s"%(col, row, pockets[col][row].isEmpty(image))
             cv2.rectangle(image, 
                           pockets[col][row].pointTopLeft.tupple,
                           pockets[col][row].pointBottomRight.tupple,
                           color_red )
+            
             # TODO: add text here to show what the detected content is.
         
     # TODO: add rectangle around next items
