@@ -29,8 +29,8 @@ class pocket( object ):
 
     def isEmpty(self, image ):
         ''' compares the default empty image with the current picture '''
-        self.currentImage = image[self.pointTopLeft.x:self.pointBottomRight.x,
-                                  self.pointTopLeft.y:self.pointBottomRight.y,:]
+        self.currentImage = image[self.pointTopLeft.y:self.pointBottomRight.y,
+                                  self.pointTopLeft.x:self.pointBottomRight.x, :]
 
         return numpy.array_equal(self.currentImage, self.emptyImage)
 

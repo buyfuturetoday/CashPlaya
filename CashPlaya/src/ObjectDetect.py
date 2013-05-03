@@ -11,60 +11,26 @@ import cv2
 import glob
 import sys
 import numpy
+from data.point import point
+from data.pocket import pocket
+from data.pockets import pockets
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
 ScrewFilenameBotomRight = "Templates/BottomRightCornerScrew.png"
 
 color_red = (0, 0, 255)
-
-
-    
-class pocket( object ):
-    ''' the square thing to hold an item '''
-    size = 40 # measured and will never change :-)
-    
-    def __init__(self, col, row, offset ):
-        # TODO: this calculations to genposckets function
-        self.PointTL = offset+point(col*self.size, row*self.size )
-        self.PointBR = offset+point((col+1)*self.size-1, (row+1)*self.size-1 )
-        
-        self.pos = point( col, row )
-        self.offset = offset
-        self.currentImage = None
-        self.emptyImage = None
-
-                
-    @property
-    def pointTopLeft(self):
-        return self.PointTL
-    
-    @property
-    def pointBottomRight(self):
-        return self.PointBR
-
-    def isEmpty(self, image ):
-        ''' compares the default empty image with the current picture '''
-        if not self.emptyImage:
-            self.emptyImage = cv2.imread(ScrewFilenameTopLeft)
-            #self.emptyImage = numpy.zeros((self.size, self.size), numpy.float32)
-
-        self.currentImage = image[self.pointTopLeft.x:self.pointTopLeft.y,
-                                  self.pointBottomRight.x:self.pointBottomRight.y,:]
-        
-        result = cv2.matchTemplate(self.emptyImage, self.currentImage, cv2.TM_CCORR_NORMED)
-        minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)  # @UnusedVariable
-
-        if maxval < 0.99:
-            print >> sys.stderr, "[%d, %d] current image not empty: %f"%(self.pos.x, self.pos.y, maxval)
-            
-            return False
-        
-        #else empty
-        return True
+      
+emptyImageList = {}
+for col in range( 0, 7):
+    for row in range( 0, 7):
+        print col, row
+        fname = "Templates/003_c%d_r%d.bmp"%(col, row)
+        emptyImageList[(col, row)] = cv2.imread(fname)
+        cv2.imshow( fname, emptyImageList[(col, row)])
         
 
-def FindCorner( image, screwtemplate, ShowTracking = True ):
+def FindCorner( image, screwtemplate, ShowTracking = False ):
     ''' using the template, the corner screw is found
     @return: the position of the corner screw
     '''
@@ -80,25 +46,15 @@ def FindCorner( image, screwtemplate, ShowTracking = True ):
     
     return point(maxloc[0], maxloc[1])
 
-def GenPockets( offset, ColCount = 7, RowCount = 7):
-    ''' generates the pocket objects with default data '''
-    pockets = []
-    for col in range(0,ColCount):
-        pockets.append([])
-        for row in range(0,RowCount):
-            pockets[col].append(pocket( col, row, offset ))
-
-    return pockets
-    
-# def CheckPocket( col, row):
-#     ''' checks if the '''
-#     pass
 
 # load templates
 screwtemplateTL = cv2.imread(ScrewFilenameTopLeft)
 screwtemplateBR = cv2.imread(ScrewFilenameBotomRight)
+fileno = 0
 
 for screenshotfilename in glob.glob("Screenshots/*.png"):
+    fileno = fileno + 1
+    emptycount = 0
     image = cv2.imread( screenshotfilename )
     
     
@@ -118,28 +74,33 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
     # TODO: magic values!
     DropItemsAreaTL = CornerTL + point(15,95)
     DropItemsAreaBR = DropItemsAreaTL + point( 281, 80 )
-    cv2.rectangle(image, DropItemsAreaTL.tupple, DropItemsAreaBR.tupple, color_red )
+    #cv2.rectangle(image, DropItemsAreaTL.tupple, DropItemsAreaBR.tupple, color_red )
 
     # red squares in matrix
     offset = point( DropItemsAreaTL.x, DropItemsAreaBR.y )
     
-    pockets = GenPockets( offset )
+    curPockets = pockets( offset, emptyImageList )
+    curPockets.processImage(image)
 
     # draw pockets
     for col in range(0,7):
         for row in range(0,7):
-            print "[%d, %d] is empty? %s"%(col, row, pockets[col][row].isEmpty(image))
-            cv2.rectangle(image, 
-                          pockets[col][row].pointTopLeft.tupple,
-                          pockets[col][row].pointBottomRight.tupple,
-                          color_red )
+            if not curPockets.isEmpty(col, row):
+                filename = "imgstore/%03d_c%d_r%d.bmp"%(fileno, col, row)
+                print "[%d, %d] not empty saving to %s"%(col, row, filename)                
+                cv2.imwrite( filename, curPockets.getImage(col, row) )
+            else:
+                emptycount += 1
+            
+    curPockets.ShowPocketBoundaries( (0,0,255), image)
+
             
             # TODO: add text here to show what the detected content is.
         
     # TODO: add rectangle around next items
     
-    cv2.imshow(screenshotfilename, image)
-
+    cv2.imshow("%d: %s"%(fileno, screenshotfilename), image)
+    print "file %d: emptycount %d"%(fileno, emptycount)
     
 # wait and cleanup
 cv2.waitKey()
