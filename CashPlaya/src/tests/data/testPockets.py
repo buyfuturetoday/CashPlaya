@@ -16,22 +16,27 @@ bigWhiteImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
 bigWhiteImage[:,:] = (255,255,255)      # (B, G, R)
 bigBlackImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
 
+emptyImageList = {}
+for col in range( 0, gridsize.x):
+    for row in range( 0, gridsize.y):
+        emptyImageList[(col, row)] = smallBlackImage
+
 class Test(unittest.TestCase):
 
 
     def testPockets(self):
-        p = pockets( offsetPoint )
+        p = pockets( offsetPoint, emptyImageList )
         self.assertEqual( p.pointTopLeft, offsetPoint )
         self.assertEqual( p.pointBottomRight, offsetPoint+7*point(pocketSize, pocketSize) - point( 1, 1 ) )    
         pass
 
     def testGetContent(self):
-        p = pockets( offsetPoint )
+        p = pockets( offsetPoint, emptyImageList )
         self.assertTrue( p.processImage( bigBlackImage ) )
         self.assertTrue( p.isEmpty(2,2) )
         
     def testShowPocketBoundaries(self):
-        p = pockets( offsetPoint )
+        p = pockets( offsetPoint, emptyImageList )
         color = (0, 0, 255)
         
         bigImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
@@ -43,7 +48,7 @@ class Test(unittest.TestCase):
         self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][2], color[2] )
         
     def testGetImage(self):
-        p = pockets( offsetPoint )
+        p = pockets( offsetPoint, emptyImageList )
         self.assertTrue( p.processImage( bigBlackImage ) )
         self.assertTrue( numpy.array_equal( p.getImage(2,2), smallBlackImage ) )
         

@@ -9,7 +9,7 @@ class pockets(object):
     
     currentImage = None
 
-    def __init__(self, offset ):
+    def __init__(self, offset, emptyImageList ):
         ''' constructor
         @param offset: The  top-left corner of the pocket reltavie to 0,0 in the main image
         @param emptyImage: The image to be used to check if the pocket is empty
@@ -17,21 +17,17 @@ class pockets(object):
         self.PointTL = offset
         self.PointBR = offset+7*point(self.pocketsize, self.pocketsize ) - point(1,1)
 
-        self.initPockets()
+        self.initPockets( emptyImageList )
 
  
-    def initPockets(self):
+    def initPockets(self, emptyImageList ):
         ''' generates the pocket objects with default data '''
-        # TODO: replace with something sensible...
-        smallBlackImage = numpy.zeros((self.pocketsize-1, self.pocketsize-1, 3), numpy.float32)
         
         self.pockets = {}
-        self.emptyImageList = {}
         for col in range(0, self.gridsize.x):
             for row in range(0, self.gridsize.y):
                 pointTL = self.PointTL + point( col*self.pocketsize, row*self.pocketsize)
-                self.emptyImageList[(col, row)] = smallBlackImage
-                self.pockets[(col, row)] = pocket( pointTL, self.emptyImageList[(col, row)] )
+                self.pockets[(col, row)] = pocket( pointTL, emptyImageList[(col, row)] )
                 
     @property
     def pointTopLeft(self):
