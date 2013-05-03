@@ -33,26 +33,5 @@ class pocket( object ):
                                   self.pointTopLeft.y:self.pointBottomRight.y,:]
 
         return numpy.array_equal(self.currentImage, self.emptyImage)
-    
-#         result = cv2.matchTemplate(self.currentImage, self.emptyImage, cv2.TM_CCORR_NORMED)
-#         minval, maxval, minloc, maxloc = cv2.minMaxLoc(result)  # @UnusedVariable
-# 
-#         cv2.imshow("gjk", self.currentImage)
-#         cv2.imshow("self.emptyImage", self.emptyImage)        
-#         cv2.imshow("result", result)
-#         cv2.imshow("image", image)
-#         print "image:", image.shape
-#         print "empty:", self.emptyImage.shape
-#         print "result: ", result.shape
-#         print "current: ", self.currentImage.shape
-# 
-#         cv2.waitKey()
-#         
-# 
-#         if maxval < 0.99:
-#             print >> sys.stderr, "Current image not empty: %f"%(maxval)
-#             return False
-#         
-#         #else empty
-#         return True
+
         
