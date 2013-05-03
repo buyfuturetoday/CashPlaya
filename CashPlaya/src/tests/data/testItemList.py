@@ -6,6 +6,7 @@ Created on May 3, 2013
 import unittest
 
 from data.ItemList import ItemList
+import cv2
 
 
 itemcount = 3
@@ -19,6 +20,16 @@ class Test(unittest.TestCase):
         self.assertEqual( il.count, itemcount )
         pass
 
+    def testFindItem(self):
+        il = ItemList( itempath )
+
+        imToFind = cv2.imread( "%s/item_00.bmp"% itempath)
+        itemno = il.findItem( imToFind )
+        self.assertEqual( itemno, 0 )
+
+        imToFind = cv2.imread( "%s/item_02.bmp"% itempath)
+        itemno = il.findItem( imToFind )
+        self.assertEqual( itemno, 2 )
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testItemList']
