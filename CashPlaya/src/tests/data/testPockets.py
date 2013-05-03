@@ -30,6 +30,18 @@ class Test(unittest.TestCase):
         self.assertTrue( p.processImage( bigBlackImage ) )
         self.assertTrue( p.isEmpty(2,2) )
         
+    def testShowPocketBoundaries(self):
+        p = pockets( offsetPoint )
+        color = (0, 0, 255)
+        
+        bigImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
+        p.ShowPocketBoundaries( color, bigImage )
+        
+        # yes, x and y are inverted...
+        self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][0], color[0] )
+        self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][1], color[1] )
+        self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][2], color[2] )
+        
         
 
 if __name__ == "__main__":

@@ -57,6 +57,15 @@ class pockets(object):
     
     def isEmpty(self, col, row):
         return self.pockets[(col, row)].isEmpty( self.currentImage)
+
+    
+    def ShowPocketBoundaries(self, color, bigImage):
+        for col in range( 0, self.gridsize.x):
+            for row in range( 0, self.gridsize.y):
+                self.pockets[(col, row)].ShowBoundary( color, bigImage )       
+        
+    
+    
     
     
     
