@@ -51,6 +51,14 @@ class Test(unittest.TestCase):
         self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][1], color[1] )
         self.assertEqual( bigImage[ offsetPoint.y, offsetPoint.x ][2], color[2] )
         
+    def testGetImage(self ):
+        p = pocket( offsetPoint, smallBlackImage )
+        
+        subimage = p.getImage( bigWhiteImage )
+        expectedSubImage = bigWhiteImage[   offsetPoint.y:offsetPoint.y+pocketSize-1,
+                                            offsetPoint.x:offsetPoint.x+pocketSize-1, :]
+
+        self.assertTrue( numpy.array_equal( subimage, expectedSubImage ) )
         
 
 if __name__ == "__main__":

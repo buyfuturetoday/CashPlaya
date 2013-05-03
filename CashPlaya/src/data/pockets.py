@@ -63,6 +63,13 @@ class pockets(object):
         for col in range( 0, self.gridsize.x):
             for row in range( 0, self.gridsize.y):
                 self.pockets[(col, row)].ShowBoundary( color, bigImage )       
+
+    
+    def getImage(self, col, row ):
+        return self.pockets[(col, row)].getImage( self.currentImage)
+        pass
+    
+    
         
     
     

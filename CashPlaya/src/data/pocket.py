@@ -35,12 +35,19 @@ class pocket( object ):
         return numpy.array_equal(self.currentImage, self.emptyImage)
 
     
-    def ShowBoundary(self, color, image):
+    def ShowBoundary(self, color, overlayImage):
         ''' draw a rectangle around the location of the pocket '''
-        cv2.rectangle(image, 
+        cv2.rectangle(overlayImage, 
                       self.pointTopLeft.tupple,
                       self.pointBottomRight.tupple,
                       color )
+
+    
+    def getImage(self, image):
+        return image[ self.PointTL.y:self.PointBR.y, self.PointTL.x:self.PointBR.x]
+
+    
+    
 
     
     
