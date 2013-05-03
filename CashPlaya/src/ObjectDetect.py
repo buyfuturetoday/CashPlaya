@@ -24,10 +24,8 @@ color_red = (0, 0, 255)
 emptyImageList = {}
 for col in range( 0, 7):
     for row in range( 0, 7):
-        print col, row
         fname = "Templates/003_c%d_r%d.bmp"%(col, row)
         emptyImageList[(col, row)] = cv2.imread(fname)
-        cv2.imshow( fname, emptyImageList[(col, row)])
         
 
 def FindCorner( image, screwtemplate, ShowTracking = False ):
@@ -52,7 +50,8 @@ screwtemplateTL = cv2.imread(ScrewFilenameTopLeft)
 screwtemplateBR = cv2.imread(ScrewFilenameBotomRight)
 fileno = 0
 
-for screenshotfilename in glob.glob("Screenshots/*.png"):
+#for screenshotfilename in glob.glob("Screenshots/*.png"):
+for screenshotfilename in glob.glob("Screenshots/Screenshot - 2013-05-01 - 21:35:24.png"):
     fileno = fileno + 1
     emptycount = 0
     image = cv2.imread( screenshotfilename )
