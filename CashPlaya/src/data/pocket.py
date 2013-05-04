@@ -38,30 +38,30 @@ class pocket( BoardElement ):
         return numpy.array_equal(self._currentImage, self._emptyImage)
 
     
-    def ShowBoundary(self, color, overlayImage):
-        ''' draw a rectangle around the location of the pocket '''
-        cv2.rectangle(overlayImage, 
-                      self.pointTopLeft.tupple,
-                      self.pointBottomRight.tupple,
-                      color )
+#     def ShowBoundary(self, color, overlayImage):
+#         ''' draw a rectangle around the location of the pocket '''
+#         cv2.rectangle(overlayImage, 
+#                       self.pointTopLeft.tupple,
+#                       self.pointBottomRight.tupple,
+#                       color )
 
     
     def getImage(self, image):
         return image[ self.pointTopLeft.y:self.pointBottomRight.y, self.pointTopLeft.x:self.pointBottomRight.x]
 
     
-    def setValue(self, value):
-        self._value = value
-
-    @property
-    def value(self):
-        return self._value
-
-    
-    def ShowValue(self, color, overlayImage):
-        org = (self._PointTL + point( 3, 13)).tupple
-        cv2.putText(overlayImage, self.value, org,
-            cv2.FONT_HERSHEY_PLAIN, 1.0, color, thickness=2 )
+#     def setValue(self, value):
+#         self._value = value
+# 
+#     @property
+#     def value(self):
+#         return self._value
+# 
+#     
+#     def ShowValue(self, color, overlayImage):
+#         org = (self._PointTL + point( 3, 13)).tupple
+#         cv2.putText(overlayImage, self.value, org,
+#             cv2.FONT_HERSHEY_PLAIN, 1.0, color, thickness=2 )
 
     
     

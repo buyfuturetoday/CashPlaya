@@ -1,4 +1,5 @@
 from data.point import point
+import cv2
 
 class BoardElement(object):
     def __init__(self, offset, size ):
@@ -17,6 +18,22 @@ class BoardElement(object):
     def pointBottomRight(self):
         return self._PointBR    
     
-    pass
+    def ShowBoundary(self, color, overlayImage):
+        ''' draw a rectangle around the location of the pocket '''
+        cv2.rectangle(overlayImage, 
+                      self.pointTopLeft.tupple,
+                      self.pointBottomRight.tupple,
+                      color )
 
+    def setValue(self, value):
+        self._value = value
 
+    @property
+    def value(self):
+        return self._value
+
+    
+    def ShowValue(self, color, overlayImage):
+        org = (self._PointTL + point( 3, 13)).tupple
+        cv2.putText(overlayImage, self.value, org,
+            cv2.FONT_HERSHEY_PLAIN, 1.0, color, thickness=2 )
