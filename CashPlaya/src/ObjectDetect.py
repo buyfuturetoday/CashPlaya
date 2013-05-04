@@ -14,6 +14,7 @@ import numpy
 from data.point import point
 from data.pocket import pocket
 from data.pockets import pockets
+from data.ItemList import ItemList
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
@@ -27,6 +28,7 @@ for col in range( 0, 7):
         fname = "Templates/003_c%d_r%d.bmp"%(col, row)
         emptyImageList[(col, row)] = cv2.imread(fname)
         
+items = ItemList( 'Templates' )
 
 def FindCorner( image, screwtemplate, ShowTracking = False ):
     ''' using the template, the corner screw is found
@@ -50,10 +52,9 @@ screwtemplateTL = cv2.imread(ScrewFilenameTopLeft)
 screwtemplateBR = cv2.imread(ScrewFilenameBotomRight)
 fileno = 0
 
-#for screenshotfilename in glob.glob("Screenshots/*.png"):
-for screenshotfilename in glob.glob("Screenshots/Screenshot - 2013-05-01 - 21:35:24.png"):
-    fileno = fileno + 1
-    emptycount = 0
+for screenshotfilename in glob.glob("Screenshots/*.png"):
+#for screenshotfilename in glob.glob("Screenshots/Screenshot - 2013-05-01 - 21:35:24.png"):
+
     image = cv2.imread( screenshotfilename )
     
     
@@ -81,16 +82,28 @@ for screenshotfilename in glob.glob("Screenshots/Screenshot - 2013-05-01 - 21:35
     curPockets = pockets( offset, emptyImageList )
     curPockets.processImage(image)
 
-    # draw pockets
+    
+    fileno = fileno + 1
+    emptycount = 0
+    unknownCount = 0
+
+    # draw pockets 
     for col in range(0,7):
         for row in range(0,7):
-            if not curPockets.isEmpty(col, row):
-                filename = "imgstore/%03d_c%d_r%d.bmp"%(fileno, col, row)
-                print "[%d, %d] not empty saving to %s"%(col, row, filename)                
-                cv2.imwrite( filename, curPockets.getImage(col, row) )
-            else:
+            if curPockets.isEmpty(col, row):
                 emptycount += 1
+                continue
             
+            item = items.findItem( curPockets.getImage(col, row))
+            if item is None:
+                filename = "imgstore/%03d_c%d_r%d.bmp"%(fileno, col, row)
+                #print "[%d, %d] not empty and not detected saving to %s"%(col, row, filename)                
+                cv2.imwrite( filename, curPockets.getImage(col, row) )
+                unknownCount = unknownCount + 1
+            else:
+                #print "[%d, %d] detected as %02d"%(col, row, item, )                
+                pass
+
     curPockets.ShowPocketBoundaries( (0,0,255), image)
 
             
@@ -99,7 +112,10 @@ for screenshotfilename in glob.glob("Screenshots/Screenshot - 2013-05-01 - 21:35
     # TODO: add rectangle around next items
     
     cv2.imshow("%d: %s"%(fileno, screenshotfilename), image)
-    print "file %d: emptycount %d"%(fileno, emptycount)
+    print "file %d"%fileno
+    print "- emptycount %d"%emptycount
+    print "- unknowncount %d"%unknownCount
+    print ""
     
 # wait and cleanup
 cv2.waitKey()

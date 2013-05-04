@@ -4,7 +4,7 @@ Created on May 2, 2013
 @author: moz
 '''
 import unittest
-from data. point import point
+from data.point import point
 from data.pocket import pocket
 import numpy
 import cv2
