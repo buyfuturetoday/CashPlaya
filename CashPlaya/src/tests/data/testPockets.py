@@ -33,7 +33,7 @@ class Test(unittest.TestCase):
     def testGetContent(self):
         p = pockets( offsetPoint, emptyImageList )
         self.assertTrue( p.processImage( bigBlackImage ) )
-        self.assertTrue( p.isEmpty(2,2) )
+        self.assertTrue( p.isEmpty(2,2) )        
         
     def testShowPocketBoundaries(self):
         p = pockets( offsetPoint, emptyImageList )
@@ -51,6 +51,19 @@ class Test(unittest.TestCase):
         p = pockets( offsetPoint, emptyImageList )
         self.assertTrue( p.processImage( bigBlackImage ) )
         self.assertTrue( numpy.array_equal( p.getImage(2,2), smallBlackImage ) )
+        
+    def testShowPocketValues(self):
+        p = pockets( offsetPoint, emptyImageList )
+        color = (0, 0, 255)
+        
+        bigImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
+        p.ShowPocketValues( color, bigImage )
+
+    def testGetSetValue(self):
+        p = pockets( offsetPoint, emptyImageList )
+        self.assertTrue( p.processImage( bigBlackImage ) )
+        p.setValue(2,2, 'X')
+        self.assertEqual( p.getValue( 2, 2 ), 'X' )
         
 
 if __name__ == "__main__":

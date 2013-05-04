@@ -60,7 +60,18 @@ class Test(unittest.TestCase):
 
         self.assertTrue( numpy.array_equal( subimage, expectedSubImage ) )
         
-
+    def testSetValue(self):
+        bigImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
+        
+        p = pocket( offsetPoint, smallBlackImage )
+        p.setValue( 'X' )
+        self.assertEqual( p.value, 'X' )
+        
+        p.ShowValue( (0,0,255), bigImage )
+        
+        cv2.imshow("gf", bigImage)
+        cv2.waitKey()
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testPocket']
     unittest.main()

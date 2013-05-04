@@ -7,15 +7,15 @@ class pockets(object):
     pocketsize = 40 # measured and will never change :-)
     gridsize = point( 7 ,7 )
     
-    currentImage = None
+    _currentImage = None
 
     def __init__(self, offset, emptyImageList ):
         ''' constructor
         @param offset: The  top-left corner of the pocket reltavie to 0,0 in the main image
         @param emptyImage: The image to be used to check if the pocket is empty
         ''' 
-        self.PointTL = offset
-        self.PointBR = offset+7*point(self.pocketsize, self.pocketsize ) - point(1,1)
+        self._PointTL = offset
+        self._PointBR = offset+7*point(self.pocketsize, self.pocketsize ) - point(1,1)
 
         self.initPockets( emptyImageList )
 
@@ -26,16 +26,16 @@ class pockets(object):
         self.pockets = {}
         for col in range(0, self.gridsize.x):
             for row in range(0, self.gridsize.y):
-                pointTL = self.PointTL + point( col*self.pocketsize, row*self.pocketsize)
+                pointTL = self._PointTL + point( col*self.pocketsize, row*self.pocketsize)
                 self.pockets[(col, row)] = pocket( pointTL, emptyImageList[(col, row)] )
                 
     @property
     def pointTopLeft(self):
-        return self.PointTL
+        return self._PointTL
     
     @property
     def pointBottomRight(self):
-        return self.PointBR
+        return self._PointBR
     
     def processImage(self, image):
         for col in range( 0, self.gridsize.x):
@@ -45,14 +45,14 @@ class pockets(object):
                     continue
         
         # TODO: do we have an issue with shallow vs. deep copy here?
-        self.currentImage = image
+        self._currentImage = image
         
         # True means success
         return True
 
     
     def isEmpty(self, col, row):
-        return self.pockets[(col, row)].isEmpty( self.currentImage)
+        return self.pockets[(col, row)].isEmpty( self._currentImage)
 
     
     def ShowPocketBoundaries(self, color, bigImage):
@@ -62,8 +62,25 @@ class pockets(object):
 
     
     def getImage(self, col, row ):
-        return self.pockets[(col, row)].getImage( self.currentImage)
+        return self.pockets[(col, row)].getImage( self._currentImage)
         pass
+
+    
+    def ShowPocketValues(self, color, bigImage):
+        for col in range( 0, self.gridsize.x):
+            for row in range( 0, self.gridsize.y):
+                self.pockets[(col, row)].ShowValue( color, bigImage )       
+
+    
+    def setValue(self, col, row, value ):
+        self.pockets[(col, row)].setValue( value )       
+
+    def getValue(self, col, row ):
+        return self.pockets[(col, row)].value
+        
+    
+    
+    
     
     
         

@@ -92,6 +92,7 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
         for row in range(0,7):
             if curPockets.isEmpty(col, row):
                 emptycount += 1
+                curPockets.setValue(col, row, 'X')
                 continue
             
             item = items.findItem( curPockets.getImage(col, row))
@@ -102,9 +103,11 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
                 unknownCount = unknownCount + 1
             else:
                 #print "[%d, %d] detected as %02d"%(col, row, item, )                
+                curPockets.setValue(col, row, str(item))
                 pass
 
     curPockets.ShowPocketBoundaries( (0,0,255), image)
+    curPockets.ShowPocketValues( (0,0, 255), image)
 
             
             # TODO: add text here to show what the detected content is.

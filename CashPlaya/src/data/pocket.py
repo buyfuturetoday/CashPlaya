@@ -10,29 +10,29 @@ class pocket( object ):
     def __init__(self, offset, emptyImage ):
         ''' constructor
         @param offset: The  top-left corner of the pocket reltavie to 0,0 in the main image
-        @param emptyImage: The image to be used to check if the pocket is empty
+        @param _emptyImage: The image to be used to check if the pocket is empty
         ''' 
-        self.PointTL = offset
-        self.PointBR = offset+point(self.size-1, self.size-1 )
+        self._PointTL = offset
+        self._PointBR = offset+point(self.size-1, self.size-1 )
         
-        self.currentImage = None
-        self.emptyImage = emptyImage
-
+        self._currentImage = None
+        self._emptyImage = emptyImage
+        self._value = '.'
                 
     @property
     def pointTopLeft(self):
-        return self.PointTL
+        return self._PointTL
     
     @property
     def pointBottomRight(self):
-        return self.PointBR
+        return self._PointBR
 
     def isEmpty(self, image ):
         ''' compares the default empty image with the current picture '''
-        self.currentImage = image[self.pointTopLeft.y:self.pointBottomRight.y,
+        self._currentImage = image[self.pointTopLeft.y:self.pointBottomRight.y,
                                   self.pointTopLeft.x:self.pointBottomRight.x, :]
 
-        return numpy.array_equal(self.currentImage, self.emptyImage)
+        return numpy.array_equal(self._currentImage, self._emptyImage)
 
     
     def ShowBoundary(self, color, overlayImage):
@@ -44,7 +44,25 @@ class pocket( object ):
 
     
     def getImage(self, image):
-        return image[ self.PointTL.y:self.PointBR.y, self.PointTL.x:self.PointBR.x]
+        return image[ self._PointTL.y:self._PointBR.y, self._PointTL.x:self._PointBR.x]
+
+    
+    def setValue(self, value):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    
+    def ShowValue(self, color, overlayImage):
+        org = (self._PointTL + point( 3, 13)).tupple
+        cv2.putText(overlayImage, self.value, org,
+            cv2.FONT_HERSHEY_PLAIN, 1.0, color, thickness=2 )
+
+    
+    
+    
 
     
     
