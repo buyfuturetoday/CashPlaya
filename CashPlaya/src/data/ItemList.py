@@ -6,6 +6,7 @@ import cv2
 import numpy
 
 class ItemList(object):
+    ''' contains a list of images loaded from disk. '''
         
     def __init__(self, itempath, filepattern = "item_%02d.bmp"):
         self.path = itempath
@@ -42,8 +43,11 @@ class ItemList(object):
         maximg = 0
         for i in range( 0, len(self.allImages)):
             result = cv2.matchTemplate(self.allImages[i], imToFind,cv2.TM_CCORR_NORMED)
-            if maxval < result[0]:
-                maxval = result[0]
+            if len(result) == 0:
+                continue
+            
+            if maxval < result[0, 0]:
+                maxval = result[0, 0]
                 maximg = i
     
         # TODO: magic val. threshold value for acceptance    

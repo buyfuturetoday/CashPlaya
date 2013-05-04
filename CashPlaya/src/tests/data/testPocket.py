@@ -11,7 +11,7 @@ import numpy
 # test data
 offsetPoint = point( 10, 20 )
 pocketSize = 40
-smallBlackImage = numpy.zeros((pocketSize-1, pocketSize-1, 3), numpy.float32)
+smallBlackImage = numpy.zeros((pocketSize, pocketSize, 3), numpy.float32)
 bigWhiteImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
 bigWhiteImage[:,:] = (255,255,255)      # (B, G, R)
 bigBlackImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
@@ -54,8 +54,8 @@ class Test(unittest.TestCase):
         p = pocket( offsetPoint, smallBlackImage )
         
         subimage = p.getImage( bigWhiteImage )
-        expectedSubImage = bigWhiteImage[   offsetPoint.y:offsetPoint.y+pocketSize-1,
-                                            offsetPoint.x:offsetPoint.x+pocketSize-1, :]
+        expectedSubImage = bigWhiteImage[   offsetPoint.y:offsetPoint.y+pocketSize,
+                                            offsetPoint.x:offsetPoint.x+pocketSize, :]
 
         self.assertTrue( numpy.array_equal( subimage, expectedSubImage ) )
         

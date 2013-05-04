@@ -32,8 +32,8 @@ class pocket( BoardElement ):
 
     def isEmpty(self, image ):
         ''' compares the default empty image with the current picture '''
-        self._currentImage = image[self.pointTopLeft.y:self.pointBottomRight.y,
-                                  self.pointTopLeft.x:self.pointBottomRight.x, :]
+        self._currentImage = image[self.pointTopLeft.y:self.pointBottomRight.y+1,
+                                  self.pointTopLeft.x:self.pointBottomRight.x+1, :]
 
         return numpy.array_equal(self._currentImage, self._emptyImage)
 
@@ -46,8 +46,8 @@ class pocket( BoardElement ):
 #                       color )
 
     
-    def getImage(self, image):
-        return image[ self.pointTopLeft.y:self.pointBottomRight.y, self.pointTopLeft.x:self.pointBottomRight.x]
+#     def getImage(self, image):
+#         return image[ self.pointTopLeft.y:self.pointBottomRight.y, self.pointTopLeft.x:self.pointBottomRight.x]
 
     
 #     def setValue(self, value):

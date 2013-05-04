@@ -41,6 +41,11 @@ class Test(unittest.TestCase):
         
         p.ShowValue( (0,0,255), bigImage )
 
+    def testGetImage(self):
+        be = BoardElement( offsetPoint, size )
+        img = be.getImage( bigBlackImage )
+        self.assertEqual( (img.shape[1], img.shape[0]), size.tupple ) 
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testBoardElement']
     unittest.main()
