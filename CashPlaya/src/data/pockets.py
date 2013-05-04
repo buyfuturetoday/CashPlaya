@@ -2,8 +2,9 @@ from data.point import point
 import sys
 from data.pocket import pocket
 import numpy
+from data.BoardElement import BoardElement
 
-class pockets(object):
+class pockets(BoardElement):
     pocketsize = 40 # measured and will never change :-)
     gridsize = point( 7 ,7 )
     
@@ -13,9 +14,11 @@ class pockets(object):
         ''' constructor
         @param offset: The  top-left corner of the pocket reltavie to 0,0 in the main image
         @param emptyImage: The image to be used to check if the pocket is empty
-        ''' 
-        self._PointTL = offset
-        self._PointBR = offset+7*point(self.pocketsize, self.pocketsize ) - point(1,1)
+        '''         
+        super(pockets, self).__init__( offset, self.pocketsize*self.gridsize)
+        
+#         self._PointTL = offset
+#         self._PointBR = offset+7*point(self.pocketsize, self.pocketsize ) - point(1,1)
 
         self.initPockets( emptyImageList )
 
@@ -29,13 +32,13 @@ class pockets(object):
                 pointTL = self._PointTL + point( col*self.pocketsize, row*self.pocketsize)
                 self.pockets[(col, row)] = pocket( pointTL, emptyImageList[(col, row)] )
                 
-    @property
-    def pointTopLeft(self):
-        return self._PointTL
-    
-    @property
-    def pointBottomRight(self):
-        return self._PointBR
+#     @property
+#     def pointTopLeft(self):
+#         return self._PointTL
+#     
+#     @property
+#     def pointBottomRight(self):
+#         return self._PointBR
     
     def processImage(self, image):
         for col in range( 0, self.gridsize.x):

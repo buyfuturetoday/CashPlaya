@@ -68,9 +68,7 @@ class Test(unittest.TestCase):
         self.assertEqual( p.value, 'X' )
         
         p.ShowValue( (0,0,255), bigImage )
-        
-        cv2.imshow("gf", bigImage)
-        cv2.waitKey()
+
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testPocket']
