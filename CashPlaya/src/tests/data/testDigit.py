@@ -8,12 +8,13 @@ from data.point import point
 from data.Digit import Digit
 
 offset = point( 3, 7)
+size = point( 15, 30 )
 
 class Test(unittest.TestCase):
 
 
     def testDigit(self):
-        d = Digit( offset )
+        d = Digit( offset, size  )
         self.assertNotEqual(d, None)
 
 
