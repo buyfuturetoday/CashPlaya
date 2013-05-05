@@ -15,6 +15,7 @@ from data.point import point
 from data.pocket import pocket
 from data.pockets import pockets
 from data.ItemList import ItemList
+from data.ScoreBoard import ScoreBoard
 
 # templates
 ScrewFilenameTopLeft = "Templates/TopLeftCornerScrew.png"
@@ -25,10 +26,11 @@ color_red = (0, 0, 255)
 emptyImageList = {}
 for col in range( 0, 7):
     for row in range( 0, 7):
-        fname = "Templates/003_c%d_r%d.bmp"%(col, row)
+        fname = "Templates/004_c%d_r%d.bmp"%(col, row)
         emptyImageList[(col, row)] = cv2.imread(fname)
         
 items = ItemList( 'Templates' )
+digits = ItemList( 'Templates', 'digit_%d.bmp')
 
 def FindCorner( image, screwtemplate, ShowTracking = False ):
     ''' using the template, the corner screw is found
@@ -70,18 +72,18 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
     print " - size: %d x %d"%size.tupple
     print ""
 
-    # red rectangle around drop area
     # TODO: magic values!
     DropItemsAreaTL = CornerTL + point(15,95)
     DropItemsAreaBR = DropItemsAreaTL + point( 281, 80 )
-    #cv2.rectangle(image, DropItemsAreaTL.tupple, DropItemsAreaBR.tupple, color_red )
+
+    ScoreBoardOffset = point( 71, 34 ) # scoreboard relative to screw
+    curScoreBoard = ScoreBoard( CornerTL + ScoreBoardOffset, digits)
 
     # red squares in matrix
     offset = point( DropItemsAreaTL.x, DropItemsAreaBR.y )
-    
+
     curPockets = pockets( offset, emptyImageList )
     curPockets.processImage(image)
-
     
     fileno = fileno + 1
     emptycount = 0
@@ -106,15 +108,15 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
                 curPockets.setValue(col, row, str(item))
                 pass
 
+
+    # add the tracking rectangles and other stuff
+    curScoreBoard.ShowBoundary( (255, 255, 0), image)
     curPockets.ShowPocketBoundaries( (0,0,255), image)
     curPockets.ShowPocketValues( (0,0, 255), image)
 
-            
-            # TODO: add text here to show what the detected content is.
-        
-    # TODO: add rectangle around next items
-    
     cv2.imshow("%d: %s"%(fileno, screenshotfilename), image)
+    cv2.imwrite("imgstore/%03d.png"%fileno, image)
+    cv2.imwrite("imgstore/%03d_score.png"%fileno, curScoreBoard.getImage(image))    
     print "file %d"%fileno
     print "- emptycount %d"%emptycount
     print "- unknowncount %d"%unknownCount

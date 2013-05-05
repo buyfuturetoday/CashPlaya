@@ -5,6 +5,7 @@ class point(object):
         self.y = y
         
     def __add__(self, otherpoint ):
+        assert(  issubclass( type(otherpoint), point) )
         return point( self.x+otherpoint.x, self.y+otherpoint.y)
     
     def __sub__(self, otherpoint ):
