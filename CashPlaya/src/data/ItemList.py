@@ -10,6 +10,7 @@ class ItemList(object):
     ''' contains a list of images loaded from disk. 
         To be used to select the best match of an image
         '''
+    _findThreshold = 0.99 # very matches are default
         
     def __init__(self, itempath, filepattern = "item_%02d.bmp"):
         ''' inits the class
@@ -58,7 +59,7 @@ class ItemList(object):
         '''
         maxval = 0
         maximg = 0
-        cv2.imshow("imtofind", imToFind)
+        #cv2.imshow("imtofind", imToFind)
         for i in range( 0, len(self.allImages)):
             result = cv2.matchTemplate(self.allImages[i], imToFind,cv2.TM_CCORR_NORMED)
             if len(result) == 0:
@@ -69,13 +70,13 @@ class ItemList(object):
                 maxval = curmaxval
                 maximg = i
  
-            cv2.imshow("im %f"%i, self.allImages[i])
+            #cv2.imshow("im %f"%i, self.allImages[i])
         
-        cv2.waitKey()
+        #cv2.waitKey()
             
     
         # TODO: magic val. threshold value for acceptance    
-        if maxval < 0.99:
+        if maxval < self._findThreshold:
             print >> sys.stderr, "maxval: %f"%maxval
             return None
     
@@ -89,6 +90,17 @@ class ItemList(object):
         '''
         shape = self.allImages[entry].shape
         return shape[1], shape[0]
+
+        
+    def setThreshold(self, threshold):
+        ''' sets the threshold for acceptable match
+        @param threshold a value between 0 and 1 
+        (don't do 1.0 since the numeric stuff will make perfect matches 99.99%)
+
+        '''
+        self._findThreshold = threshold
+        
+        
 
     
     
