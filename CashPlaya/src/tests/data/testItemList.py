@@ -31,6 +31,10 @@ class Test(unittest.TestCase):
         itemno = il.findItem( imToFind )
         self.assertEqual( itemno, 2 )
 
+    def testGetSize(self):
+        il = ItemList( itempath )
+        self.assertEqual( (39, 39), il.getSize( 0 ))
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testItemList']
     unittest.main()

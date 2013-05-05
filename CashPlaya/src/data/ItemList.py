@@ -46,8 +46,9 @@ class ItemList(object):
             if len(result) == 0:
                 continue
             
-            if maxval < result[0, 0]:
-                maxval = result[0, 0]
+            curminval, curmaxval, curminloc, curmaxloc = cv2.minMaxLoc(result)  # @UnusedVariable
+            if maxval < curmaxval:
+                maxval = curmaxval
                 maximg = i
     
         # TODO: magic val. threshold value for acceptance    
@@ -55,6 +56,14 @@ class ItemList(object):
             return None
     
         return maximg
+
+    
+    def getSize(self, entry): 
+        shape = self.allImages[entry].shape
+        return shape[1], shape[0]
+
+    
+    
     
     
     
