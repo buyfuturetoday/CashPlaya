@@ -57,6 +57,14 @@ class Test(unittest.TestCase):
         itemno = il.findItem( imToFind )
         self.assertEqual( itemno, 0 )
         
+    def testGetItemInfo(self):
+        il = ItemList( itempath )
+        imToFind = cv2.imread( "%s/item_00_almost.bmp"% itempath)
+        il.setThreshold( 0.1 )
+        il.findItem( imToFind )
+        info = il.getLastResult()
+        self.assertEqual( info[0], (0.9475897550582886, 0.9475897550582886, (0, 0), (0, 0)) )
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testItemList']

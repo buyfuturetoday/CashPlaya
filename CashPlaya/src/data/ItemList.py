@@ -3,14 +3,13 @@
 
 import os
 import cv2
-import numpy
 import sys
 
 class ItemList(object):
     ''' contains a list of images loaded from disk. 
         To be used to select the best match of an image
         '''
-    _findThreshold = 0.99 # very matches are default
+    _findThreshold = 0.99 # very good matches are default
         
     def __init__(self, itempath, filepattern = "item_%02d.bmp"):
         ''' inits the class
@@ -20,7 +19,7 @@ class ItemList(object):
         self.path = itempath
         self.filepattern = filepattern
         self.initImages( )
-    
+   
     def initImages(self):
         ''' Initializes the images by loading from disk.
             Based on a count and a file pattern, when no more image files are found, it stops loading
@@ -29,7 +28,8 @@ class ItemList(object):
         itemcounter = 0
         images = []
         width = 0
-        
+        self._Results = []
+
         # loop until no more files
         while True:
             filename = os.path.join( self.path, self.filepattern%itemcounter)
@@ -39,7 +39,8 @@ class ItemList(object):
 
             images.append( cv2.imread( filename ) )
             itemcounter = itemcounter + 1
-            
+            self._Results.append( None )
+
         # and save the result        
         self.imagecount = itemcounter
         self.itemsize = width
@@ -59,23 +60,21 @@ class ItemList(object):
         '''
         maxval = 0
         maximg = 0
-        #cv2.imshow("imtofind", imToFind)
+        self._Results = []
+
+        # loop through all images and compare
         for i in range( 0, len(self.allImages)):
             result = cv2.matchTemplate(self.allImages[i], imToFind,cv2.TM_CCORR_NORMED)
             if len(result) == 0:
                 continue
             
             curminval, curmaxval, curminloc, curmaxloc = cv2.minMaxLoc(result)  # @UnusedVariable
+            self._Results.append( (curminval, curmaxval, curminloc, curmaxloc) )
             if maxval < curmaxval:
                 maxval = curmaxval
                 maximg = i
  
-            #cv2.imshow("im %f"%i, self.allImages[i])
-        
-        #cv2.waitKey()
-            
-    
-        # TODO: magic val. threshold value for acceptance    
+        # if less than a threshold, we don't have a match
         if maxval < self._findThreshold:
             print >> sys.stderr, "maxval: %f"%maxval
             return None
@@ -96,9 +95,16 @@ class ItemList(object):
         ''' sets the threshold for acceptable match
         @param threshold a value between 0 and 1 
         (don't do 1.0 since the numeric stuff will make perfect matches 99.99%)
-
         '''
         self._findThreshold = threshold
+
+        
+    def getLastResult(self):
+        ''' returns the result as returned by minMaxLoc()
+        '''
+        return self._Results
+    
+        
         
         
 
