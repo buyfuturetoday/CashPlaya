@@ -76,7 +76,7 @@ class ItemList(object):
  
         # if less than a threshold, we don't have a match
         if maxval < self._findThreshold:
-            print >> sys.stderr, "maxval: %f"%maxval
+            #print >> sys.stderr, "maxval: %f"%maxval
             return None
     
         return maximg

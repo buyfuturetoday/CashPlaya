@@ -41,53 +41,36 @@ class ScoreBoard(BoardElement):
 
             item = self._digitlist.findItem( imToFind )
             if item == None:
-                filename = 'digit_loc_%02d.png'%i
-                cv2.imwrite( filename, imToFind )
-                print >> sys.stderr, "digit not recognized: %s"%filename
+                # TODO: better handling of blanks.
+#                 filename = 'digit_loc_%02d.png'%i
+#                 cv2.imwrite( filename, imToFind )
+#                 print >> sys.stderr, "digit not recognized: %s"%filename
+                pass
             else:
                 digits.append( item )
 
                 res = self._digitlist.getLastResult()[item]
-                print "item: %d, result: %f, pos %s"%(item, res[1], res[3])
 
                 size = point( *self._digitlist.getSize( item ) )
-#                widthadj = widthadj + self._defaultDigitSize.x - size.x
                 widthadj = widthadj + res[3][0]
 
-                # update current element with new size
-                # size is known by detected item.
-                # TopLeft is oldBottomRight-size+p(1,1) - where it was detected
-#                 self._digitelements[i] = Digit(self._digitelements[i].pointBottomRight-size+point(1,1)-point(res[3][0], res[3][1]), 
-#                                                size )
                 self._digitelements[i] = Digit(self._digitelements[i].pointTopLeft+point(res[3][0], res[3][1]), 
                                                size )
 
-                print "digit %d width: %d (acc: %d)"%(item, size.x, widthadj)
-#                 print self._digitelements[i].pointTopLeft
-#                 print self._digitelements[i].pointBottomRight
-#                                 
-#                 print self._digitelements[i].pointBottomRight   \
-#                                                  - point( self._defaultDigitSize.x, 0 )
-
                 
             if i+1 < len( self._digit_rel_loc ):
-                
+                defaultDistance = 3 # dist between digits
                 if (i+1) % 3 == 0:
-                    ExtraOffset = point( 12+3, 0 )
+                    ExtraOffset = point( 12+defaultDistance, 0 )
                 else:
-                    ExtraOffset = point( 0+3, 0 )                    
+                    ExtraOffset = point( 0+defaultDistance, 0 )                    
                 
                 # recreate digit with better start point
                 self._digitelements[i+1] = Digit(self._digitelements[i].pointTopLeft    \
                                                  - point( self._defaultDigitSize.x, 0) - ExtraOffset,
                                                  self._defaultDigitSize )
 
-#             cv2.imshow("imtofind", imToFind)
-#             cv2.waitKey()
-        
-        for digit in self._digitelements:
-            print digit.pointTopLeft
-        print digits
+        # calculate the integer value
         digitssum = 0
         for i in range( 0, len(digits) ):
             digitssum = digitssum + digits[i]*10**i

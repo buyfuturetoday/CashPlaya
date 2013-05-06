@@ -16,7 +16,6 @@ bigWhiteImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
 bigWhiteImage[:,:] = (255,255,255)      # (B, G, R)
 bigBlackImage = numpy.zeros((pocketSize*10, pocketSize*10, 3), numpy.float32)
 #bigBlackImage[:,:] = (0,0,0)      # (B, G, R)
-
 # # debug stuff
 # cv2.imshow( "bigWhiteImage", bigWhiteImage )
 # cv2.imshow( "bigBlackImage", bigBlackImage )
