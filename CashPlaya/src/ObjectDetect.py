@@ -30,7 +30,9 @@ for col in range( 0, 7):
         emptyImageList[(col, row)] = cv2.imread(fname)
         
 items = ItemList( 'Templates' )
-digits = ItemList( 'Templates', 'digit_%d.bmp')
+digits = ItemList( 'Templates', 'digit_%d.png')
+digits.setThreshold(0.8)
+
 
 def FindCorner( image, screwtemplate, ShowTracking = False ):
     ''' using the template, the corner screw is found
@@ -59,18 +61,10 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
 
     image = cv2.imread( screenshotfilename )
     
-    
-    print "located corners in file %s"%screenshotfilename
-    
+    # locate screw to fix image
     CornerTL = FindCorner( image, screwtemplateTL )
-    print " - top-left: %d, %d"%CornerTL.tupple
-
     CornerBR = FindCorner( image, screwtemplateBR )
-    print " - bottom-right: %d, %d"%CornerBR.tupple
-    
     size = CornerBR -CornerTL
-    print " - size: %d x %d"%size.tupple
-    print ""
 
     # TODO: magic values!
     DropItemsAreaTL = CornerTL + point(15,95)
@@ -78,6 +72,7 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
 
     ScoreBoardOffset = point( 71, 34 ) # scoreboard relative to screw
     curScoreBoard = ScoreBoard( CornerTL + ScoreBoardOffset, digits)
+    CurScore = curScoreBoard.ReadScore(image)
 
     # red squares in matrix
     offset = point( DropItemsAreaTL.x, DropItemsAreaBR.y )
@@ -108,6 +103,8 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
                 curPockets.setValue(col, row, str(item))
                 pass
 
+    # save some images before drawing on the base image
+    cv2.imwrite("imgstore/%03d_score.png"%fileno, curScoreBoard.getImage(image))
 
     # add the tracking rectangles and other stuff
     curScoreBoard.ShowBoundary( (255, 255, 0), image)
@@ -116,10 +113,15 @@ for screenshotfilename in glob.glob("Screenshots/*.png"):
 
     cv2.imshow("%d: %s"%(fileno, screenshotfilename), image)
     cv2.imwrite("imgstore/%03d.png"%fileno, image)
-    cv2.imwrite("imgstore/%03d_score.png"%fileno, curScoreBoard.getImage(image))    
-    print "file %d"%fileno
+    print "Result of processing file %d: %s"%(fileno, screenshotfilename)
+    print "located corners:"
+    print " - top-left: %d, %d"%CornerTL.tupple
+    print " - bottom-right: %d, %d"%CornerBR.tupple    
+    print " - size: %d x %d"%size.tupple    
+    print "Pockets:"
     print "- emptycount %d"%emptycount
     print "- unknowncount %d"%unknownCount
+    print "Score: %d"%CurScore
     print ""
     
 # wait and cleanup
