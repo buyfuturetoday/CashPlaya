@@ -37,6 +37,9 @@ class Test(unittest.TestCase):
         self.assertEqual( m*point( a, b ), point(m*a, m*b))
         self.assertEqual( point( a, b )*m, point(m*a, m*b))
         
+    def testStr(self):
+        p = point( 3, 4 )
+        self.assertEqual(str(p), "point: (3, 4)" )
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

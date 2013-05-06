@@ -22,3 +22,6 @@ class point(object):
     @property
     def tupple(self):
         return self.x, self.y
+    
+    def __str__(self):
+        return "point: (%d, %d)"%(self.x, self.y)
